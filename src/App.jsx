@@ -14,6 +14,12 @@ function App() {
   const [watchlistMovies, setWatchlistMovies] = useState([]);
   const [showWatchlist, setShowWatchlist] = useState(false);
 
+
+  const handleRemove = (id) => {
+    setWatchlistMovies(prevList => prevList.filter(movie => movie.id !== id));
+  };
+
+
   function handleAddToWatchList(movie) {
     const isAlreadyInWatchlist = watchlistMovies.some(watchlistMovie => watchlistMovie.id === movie.id);
     if (!isAlreadyInWatchlist) {
@@ -62,7 +68,7 @@ function App() {
               <h2 className="mb-0" style={{ fontWeight: 'bold', fontSize: '2rem', color: '#800000', textAlign: 'left', paddingLeft: '24px' }}>Watch List</h2>
             </div>
             <div style={{ background: '#fff', borderRadius: '10px', padding: '16px 0', marginBottom: '2.5rem', border: '1px solid #e0e0e0' }}>
-              <WatchList movies={watchlistMovies} setMovies={setWatchlistMovies} />
+              <WatchList movies={watchlistMovies}  handleRemove={handleRemove} />
             </div>
           </>
         )}
