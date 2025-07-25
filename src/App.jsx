@@ -8,18 +8,22 @@ import Logo from './components/Logo';
 import MovieList from './components/MovieList';
 import WatchList from './components/WatchList';
 import Loading from './components/Loading';
+import ErrorMessage from './components/ErrorMessage';
 import { movie_list } from './data.js';
+import Errormessage from './components/ErrorMessage.jsx';
 
 
 const api_key = "bc33151c1994574150615ce76d71b4eb";
 const page=1;
-const query="batman";
+
 
 function App() {
   const [movies, setMovies] = useState([]);
   const [watchlistMovies, setWatchlistMovies] = useState([]);
   const [showWatchlist, setShowWatchlist] = useState(false);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
+  const [searchQuery,setSearchQuery]=useState("");
 
   //mounting;componenet ilk render edildiginde
   //re=render ;state degistiginde
@@ -28,33 +32,53 @@ function App() {
 
   
 
-  useEffect(()=>{
-
-async function getMovies(){
-  setLoading(true);
-
-
-    const response= await fetch(
-      `https://api.themoviedb.org/3/search/movie?api_key=${api_key}&query=${query}&page=${page}`) ;
-
-
-      const data=await response.json();
-
-      setMovies(data.results);
-      setLoading(false);
-  }
+  useEffect(() => {
+    async function getMovies() {
+      try {
+        const response = await fetch(
+          `https://api.themoviedb.org/3/search/movie?api_key=${api_key}&query=${searchQuery}&page=${page}`
+        );
   
-  getMovies();
+        if (!response.ok) {
+          // Hata durumuna göre özel mesajlar
+          if (response.status === 401) {
+            throw new Error("API anahtarı geçersiz veya yetkisiz erişim (401).");
+          } else if (response.status === 404) {
+            throw new Error("Film bulunamadı (404).");
+          } else if (response.status === 500) {
+            throw new Error("Sunucu hatası (500). Lütfen daha sonra tekrar deneyin.");
+          } else {
+            throw new Error(`Beklenmeyen hata: ${response.status}`);
+          }
+        }
+  
+        const data = await response.json();
 
+        setMovies(data.results);
 
-},[]);
- 
+        setError("");
 
+      } catch (error) {
 
+        console.error('Film verisi alınamadı:', error);
 
+        // Hata durumunda kullanıcıya mesaj göstermek için:
+        setError(error.message);
 
+      } finally {
 
+        setLoading(false); // loading ne olursa olsun durmalı
 
+      }
+    }
+    if(searchQuery.length<4){
+      setMovies([]);
+      setError([]);
+      return;
+    }
+
+    getMovies();
+  }, [searchQuery]);
 
 
   const handleRemove = (id) => {
@@ -81,7 +105,7 @@ async function getMovies(){
           </div>
           <div className="col-md-8">
             <div className="d-flex align-items-center justify-content-end">
-              <SearchForm movies={movies} setMovies={setMovies} />
+              <SearchForm searchQuery={searchQuery} setSearchQuery={setSearchQuery}   />
               <div style={{ marginLeft: '1px' }}>
                 <WatchListButton
                   movies={watchlistMovies}
@@ -100,15 +124,14 @@ async function getMovies(){
         </div>
         <div style={{ background: '#fff', borderRadius: '10px', padding: '16px 0', marginBottom: '2.5rem', border: '1px solid #e0e0e0' }}>
 
-        {loading ? (
-  <Loading />
-) : (
-  <MovieList
-    movies={movies}
-    setMovies={setMovies}
-    onAddToList={handleAddToWatchList}
-  />
-)}</div>
+       {loading &&<Loading />} 
+       {!loading&&!error&&  <MovieList movies={movies} setMovies={setMovies}onAddToList={handleAddToWatchList}/>}
+       {error&&<ErrorMessage message={error}/>}
+
+
+
+ 
+  </div>
 
       
 

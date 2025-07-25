@@ -1,10 +1,18 @@
 import React, { useState } from 'react';
 
-function SearchForm() {
+
+function SearchForm({searchQuery,setSearchQuery}) {
   const [hover, setHover] = React.useState(false);
   return (
     <form onSubmit={e => { e.preventDefault(); }} style={{ marginTop: '0px', display: 'flex', alignItems: 'center' }}>
-      <input type="text" placeholder="Search" style={{ padding: '5px', fontSize: '1rem' }} />
+      <input 
+      type="text" 
+      placeholder="Search" 
+      value={searchQuery} 
+      onChange={(e)=>setSearchQuery(e.target.value)}
+      style={{ padding: '5px', fontSize: '1rem' }} 
+      />
+
       <div
         style={{
           marginLeft: '5px',
