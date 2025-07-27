@@ -11,6 +11,7 @@ import Loading from './components/Loading';
 import ErrorMessage from './components/ErrorMessage';
 import { movie_list } from './data.js';
 import Errormessage from './components/ErrorMessage.jsx';
+import MovieDetails from './components/MovieDetails.jsx';
 
 
 const api_key = "bc33151c1994574150615ce76d71b4eb";
@@ -24,6 +25,7 @@ function App() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [searchQuery,setSearchQuery]=useState("");
+  const [selectedMovie,setSelectedMovie]=useState(null);
 
   //mounting;componenet ilk render edildiginde
   //re=render ;state degistiginde
@@ -55,6 +57,8 @@ function App() {
         const data = await response.json();
 
         setMovies(data.results);
+
+        console.log(data.results);
 
         setError("");
 
@@ -105,12 +109,18 @@ function App() {
           </div>
           <div className="col-md-8">
             <div className="d-flex align-items-center justify-content-end">
+
+
               <SearchForm searchQuery={searchQuery} setSearchQuery={setSearchQuery}   />
               <div style={{ marginLeft: '1px' }}>
+
+
                 <WatchListButton
                   movies={watchlistMovies}
                   setShowWatchlist={setShowWatchlist}
                 />
+
+
               </div>
             </div>
           </div>
@@ -118,14 +128,34 @@ function App() {
       </Header>
 
       <Main>
-        {/* Movie List Section */}
+
+      {selectedMovie?.id && (
+
+    <MovieDetails
+      movie={selectedMovie}
+      onClose={() => setSelectedMovie(null)}
+   />
+)}
+
+
+    
         <div style={{ background: '#f3f3f3', borderRadius: '10px', padding: '18px 0 8px 0', marginBottom: '0.5rem' }}>
           <h2 className="mb-0" style={{ fontWeight: 'bold', fontSize: '2rem', color: '#800000', textAlign: 'left', paddingLeft: '24px' }}>Movie List</h2>
         </div>
         <div style={{ background: '#fff', borderRadius: '10px', padding: '16px 0', marginBottom: '2.5rem', border: '1px solid #e0e0e0' }}>
 
        {loading &&<Loading />} 
-       {!loading&&!error&&  <MovieList movies={movies} setMovies={setMovies}onAddToList={handleAddToWatchList}/>}
+       {!loading&&!error&&  
+
+
+       <MovieList 
+        movies={movies} 
+        setMovies={setMovies}
+        onAddToList={handleAddToWatchList}
+        onHandleSelectedMovie={setSelectedMovie}/>
+        }
+
+
        {error&&<ErrorMessage message={error}/>}
 
 
@@ -135,17 +165,27 @@ function App() {
 
       
 
-        {/* Watch List Section */}
+       
         {showWatchlist && (
           <>
             <div style={{ background: '#f3f3f3', borderRadius: '10px', padding: '18px 0 8px 0', marginBottom: '0.5rem' }}>
               <h2 className="mb-0" style={{ fontWeight: 'bold', fontSize: '2rem', color: '#800000', textAlign: 'left', paddingLeft: '24px' }}>Watch List</h2>
             </div>
             <div style={{ background: '#fff', borderRadius: '10px', padding: '16px 0', marginBottom: '2.5rem', border: '1px solid #e0e0e0' }}>
-              <WatchList movies={watchlistMovies} handleRemove={handleRemove} />
+
+
+              <WatchList 
+                movies={watchlistMovies} 
+                handleRemove={handleRemove} 
+               
+                
+              />
+
+
             </div>
           </>
         )}
+
       </Main>
 
       <Footer />
