@@ -91,11 +91,11 @@ function MovieDetails({ movie, onClose }) {
 
               <p className="card-text">
                 <small className="text-muted">
-                  Çıkış Tarihi: {details.release_date} <br />
-                  Yönetmen: {director} <br />
-                  Yapımcı Şirketler:{" "}
+                Release Date: {details.release_date} <br />
+                Director: {director} <br />
+                Companies:{" "}
                   {details.production_companies?.map(c => c.name).join(", ") || "Yok"} <br />
-                  Ülkeler:{" "}
+                  Countries:{" "}
                   {details.production_countries?.map(c => c.name).join(", ") || "Bilinmiyor"}
                 </small>
               </p>
@@ -103,7 +103,7 @@ function MovieDetails({ movie, onClose }) {
               {loadedMovie && (
 
 
-                <p><strong>sure : </strong>{runtime !== null ? `${runtime} dakika` : "Yükleniyor..."}</p>
+                <p><strong>sure : </strong>{runtime !== null ? `${runtime} dakika` : "Loading..."}</p>
 
               )}
             </p>
@@ -117,7 +117,7 @@ function MovieDetails({ movie, onClose }) {
             </div>
 
 
-            <h6 className="mt-4">Oyuncular:</h6>
+            <h6 className="mt-4">Cast:</h6>
             <div className="row row-cols-2 row-cols-sm-3 row-cols-md-4 row-cols-lg-5 g-3">
               {cast.map((actor) => (
                 <div className="col" key={actor.cast_id}>

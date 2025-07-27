@@ -1,27 +1,23 @@
+
 import React from 'react';
 
-function Movie({ movie, onAddToList,onHandleSelectedMovie }) {
+function Movie({ movie }) {
   return (
-    <div className="col-md-4 mb-4"  onClick={()=>onHandleSelectedMovie(movie)}>
-      <div className="card h-100" 
-       >
-
-        <img src={"https://image.tmdb.org/t/p/original/"+movie.poster_path} className="card-img-top" alt={movie.title} style={{ height: '200px', objectFit: 'cover' }} />
-        <div className="card-body d-flex flex-column">
-          <h5 className="card-title">{movie.title}</h5>
-          <p className="card-text">{movie.description}</p>
-          <div className="mt-auto">
-            <button 
-              className="btn btn-primary btn-sm"
-              onClick={() => onAddToList(movie)}
-            >
-              <i className="bi bi-heart"></i> Add to Watchlist
-            </button>
-          </div>
-        </div>
+    <div className="card h-100">
+      <img
+        src={`https://image.tmdb.org/t/p/w500${movie.poster_path}`}
+        className="card-img-top"
+        alt={movie.title}
+        style={{ height: '300px', objectFit: 'cover' }}
+      />
+      <div className="card-body d-flex flex-column">
+        <h5 className="card-title">{movie.title}</h5>
+        <p className="card-text text-truncate" title={movie.description}>
+          {movie.description || "Açıklama bulunamadı"}
+        </p>
       </div>
     </div>
   );
 }
 
-export default Movie; 
+export default Movie;
