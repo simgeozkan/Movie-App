@@ -6,16 +6,20 @@ import '../index.css';
 const Navbar = () => {
   return (
    <>
-   <Logo/>
+
+
+
     <nav
-      className="bg-dark text-white container-fluid mb=3 d-flex justify-content-center"
+      className="bg-dark text-white container-fluid mb-3 d-flex justify-content-between"
       style={{
-        padding: '1rem',
+        padding: '2rem',
         background: '#222', // koyu arkaplan
         color: '#fff',      // beyaz yazi
         borderBottom: '1px solid #333'
       }}
     >
+    <Logo/>
+    <div className="d-flex">
       <NavLink
         to="/"
         end
@@ -41,7 +45,7 @@ const Navbar = () => {
 
 
       </NavLink>
-
+      </div>
      
     </nav>
     </>

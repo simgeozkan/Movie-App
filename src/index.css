@@ -1,14 +1,12 @@
 .nav-link {
-    color: white;
-    text-decoration: none;
-    margin-right: 1rem;
-  }
+  color: white;
+  text-decoration: none;
+  margin-right: 1rem;
+  transition: all 0.3s ease;
+}
 
-
-  
-  .nav-link.active {
-    color: #db1551;
-    font-weight: bold;
-    border-bottom: 2px solid #f1f3f3;
-  }
-  
+.nav-link.active {
+  color: #db1551;
+  font-weight: bold;
+  border-bottom: 2px solid #f1f3f3;
+}
