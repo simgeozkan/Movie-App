@@ -4,30 +4,33 @@ import { useState, useEffect } from 'react';
 import Loading from '../components/Loading';
 import Errormessage from '../components/ErrorMessage';
 import Movie from '../components/Movie';
-import { TemaContext } from '../context/TemaContext.jsx';
-import { useContext } from 'react';
+import { useSearchParams } from 'react-router-dom';
+import Pagenation from '../components/Pagenation';
+
 
 const api_url = "https://api.themoviedb.org/3";
 const api_key = "bc33151c1994574150615ce76d71b4eb";
-const page=1;
 
 
-function Movies() {
 
-  const{tema}=useContext(TemaContext);
-  const color=tema==="dark"? "bg-dark text-light":"bg-white text-gray-900";
-
-
+function SearchResults() {
   const [movies, setMovies] = useState([]);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+  const [totalPages, setTotalPages] = useState(0);
+  const [searchParams, setSearchParams] = useSearchParams();
+
+    const query=searchParams.get("q");
+    const page = parseInt(searchParams.get("page")) || 1;
+    
+
 
     useEffect(() => {
         async function getMovies() {
             setLoading(true);
           try {
             const response = await fetch(
-              `${api_url}/movie/popular?api_key=${api_key}&page=${page}`
+              `${api_url}/search/movie?api_key=${api_key}&query=${query}&page=${page}`
             );
       
             if (!response.ok) {
@@ -46,6 +49,7 @@ function Movies() {
             const data = await response.json();
     
             setMovies(data.results);
+            setTotalPages(data.total_pages);
     
             console.log(data.results);
     
@@ -74,42 +78,55 @@ function Movies() {
         }*/}
     
         getMovies();
-      }, []);
+      }, [query,page]);
     
+
+
       if(loading){
         return (<Loading/>) 
       }
 
       
+
       if(error){
         return (<ErrorMessage message={error}/>)
        
       }
+      console.log("Query:", query, "Page:", page);
 
 
     return (
-      <>
-      <div className={`bg-${tema} card text-center  ${color}`}>
-        <div className="card-body">
-          <h3 className="card-title mb-0">Populer movies</h3>
+        <>
+        <div style={{ background: '#f1f1f1', padding: '12px 20px', borderRadius: '8px', marginBottom: '20px' }}>
+          <h6 style={{ margin: 0, color: '#222', fontWeight: 600 }}>Arama sonuclari : {query}</h6>
         </div>
-      </div>
-      
-        <div className="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-6 g-4 p-3 m-auto">
-         
+       
+        <div className="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-6 g-3">
+        
         {movies.map(movie => (
-          <div key={movie.id} className="col mb-3">
+          <div key={movie.id} className="col">
             <Movie movie={movie} />
           </div>
         ))}
-        <br /><br /><br />
       </div>
+
+      <div style={{ display: 'flex', justifyContent: 'center', marginTop: '20px' }}>
+
+  <Pagenation 
+    page={page} 
+    totalPages={totalPages} 
+    setSearchparams={setSearchParams} 
+    query={query} 
+  />
+ 
+</div>
       
-  </>
+      </>
+  
     
         
 
     )
 }
 
-export default Movies;
+export default SearchResults;

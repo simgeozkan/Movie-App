@@ -4,20 +4,13 @@ import { useState, useEffect } from 'react';
 import Loading from '../components/Loading';
 import Errormessage from '../components/ErrorMessage';
 import Movie from '../components/Movie';
-import { TemaContext } from '../context/TemaContext.jsx';
-import { useContext } from 'react';
 
 const api_url = "https://api.themoviedb.org/3";
 const api_key = "bc33151c1994574150615ce76d71b4eb";
 const page=1;
 
 
-function Movies() {
-
-  const{tema}=useContext(TemaContext);
-  const color=tema==="dark"? "bg-dark text-light":"bg-white text-gray-900";
-
-
+function SimilarMovies({movieId}) {
   const [movies, setMovies] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
@@ -27,7 +20,7 @@ function Movies() {
             setLoading(true);
           try {
             const response = await fetch(
-              `${api_url}/movie/popular?api_key=${api_key}&page=${page}`
+              `${api_url}/movie/${movieId}/similar?api_key=${api_key}&page=${page}`
             );
       
             if (!response.ok) {
@@ -74,7 +67,7 @@ function Movies() {
         }*/}
     
         getMovies();
-      }, []);
+      }, [movieId]);
     
       if(loading){
         return (<Loading/>) 
@@ -88,15 +81,7 @@ function Movies() {
 
 
     return (
-      <>
-      <div className={`bg-${tema} card text-center  ${color}`}>
-        <div className="card-body">
-          <h3 className="card-title mb-0">Populer movies</h3>
-        </div>
-      </div>
-      
-        <div className="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-6 g-4 p-3 m-auto">
-         
+        <div className="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-6 g-3 ">
         {movies.map(movie => (
           <div key={movie.id} className="col mb-3">
             <Movie movie={movie} />
@@ -105,11 +90,11 @@ function Movies() {
         <br /><br /><br />
       </div>
       
-  </>
+  
     
         
 
     )
 }
 
-export default Movies;
+export default SimilarMovies;

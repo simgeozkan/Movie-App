@@ -4,6 +4,9 @@ import MovieDetails from './pages/MovieDetails';
 import Home from './pages/Home';
 import Movies from './pages/Movies';
 import MainLayout from './layouts/MainLayout';
+import SearchResults from './pages/SearchResults';
+import 'bootstrap/dist/css/bootstrap.min.css';
+
 
 
 
@@ -18,7 +21,8 @@ const routes = createBrowserRouter([
     children: [
       { index:true, element: <Home /> },
       { path: "movies", element: <Movies /> },
-      { path: "movies/:id", element: <MovieDetails /> },],
+      { path: "movies/:id", element: <MovieDetails /> },
+      { path: "search/", element: <SearchResults /> },],
 
   }
 
@@ -28,7 +32,11 @@ const routes = createBrowserRouter([
 
 
 function App() {
-  return <RouterProvider router={routes} />
+  return (
+ 
+      <RouterProvider router={routes} />
+   
+  )
 
 }
 
