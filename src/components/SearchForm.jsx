@@ -35,7 +35,7 @@ function SearchForm({}) {
     <form onSubmit={handleSubmit} style={{ marginTop: '0px', display: 'flex', alignItems: 'center' }}>
       <input 
       
-      type="text" 
+      type="search" 
       placeholder="Search" 
       value={searchQuery} 
       onChange={(e)=>setSearchQuery(e.target.value)}

@@ -6,7 +6,9 @@ import Movies from './pages/Movies';
 import MainLayout from './layouts/MainLayout';
 import SearchResults from './pages/SearchResults';
 import 'bootstrap/dist/css/bootstrap.min.css';
-
+import UserWatchList from './pages/UserWatchList';
+import Login from './pages/Login';
+import Register from './pages/Register';
 
 
 
@@ -22,7 +24,13 @@ const routes = createBrowserRouter([
       { index:true, element: <Home /> },
       { path: "movies", element: <Movies /> },
       { path: "movies/:id", element: <MovieDetails /> },
-      { path: "search/", element: <SearchResults /> },],
+      { path: "search/", element: <SearchResults /> },
+      { path: "watchlist/", element: <UserWatchList /> },
+      { path: "login/", element: <Login/> },
+      { path: "register/", element: <Register/> },
+    
+    
+    ],
 
   }
 
@@ -32,10 +40,16 @@ const routes = createBrowserRouter([
 
 
 function App() {
+
+
   return (
- 
+
+
+
       <RouterProvider router={routes} />
-   
+ 
+
+
   )
 
 }

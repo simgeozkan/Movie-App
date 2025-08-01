@@ -4,6 +4,8 @@ import Logo from './Logo';
 import SearchForm from './SearchForm';
 import '../index.css';
 import { TemaContext } from '../context/TemaContext.jsx';
+import TemaSelector from './TemaSelector.jsx';
+import { UserContext } from '../context/UserContext.jsx';
 
 
 
@@ -15,11 +17,15 @@ import { TemaContext } from '../context/TemaContext.jsx';
 const Navbar = () => {
 
  
-const {tema}=useContext(TemaContext);
+const {tema,setTema}=useContext(TemaContext);
+const { watchList} = useContext(UserContext);
 
 const color=tema==="dark"? "text-white":"text-black";
+
+
   
   return (
+
    <>
 
 
@@ -27,11 +33,14 @@ const color=tema==="dark"? "text-white":"text-black";
       <nav
         className={`navbar navbar-expand-lg bg-${tema} border-bottom border-body ${color}`}
         data-bs-theme={tema}
+       
         
       >
         <div className="container-fluid">
+        <TemaSelector/>
 
           <NavLink className={`navbar-brand ${color}" to="/"`}>
+          
             <Logo />
           </NavLink>
 
@@ -56,7 +65,7 @@ const color=tema==="dark"? "text-white":"text-black";
                 
                   to="/"
                   end
-                  className={({ isActive }) => `nav-link ${isActive ? 'active' : ''} ${color}`}
+                  className={'nav-link '}
                
                 >
                   Home
@@ -65,14 +74,51 @@ const color=tema==="dark"? "text-white":"text-black";
               <li className="nav-item">
                 <NavLink
                   to="/movies"
-                  className={({ isActive }) => `nav-link ${isActive ? 'active' : ''} ${color}`}
+                  className={'nav-link '}
                  
                 >
                   Movies
                 </NavLink>
               </li>
             </ul>
+
+
+            <ul className="navbar-nav ms-auto mb-2 mb-lg-0">
+              <li className="nav-item">
+                <NavLink
+                
+                  to="/login"
+                  end
+                  className={'nav-link '}
+               
+                >
+                  Login
+                </NavLink>
+              </li>
+              <li className="nav-item">
+                <NavLink
+                  to="/register"
+                  className={'nav-link '}
+                 
+                >
+                  Register
+                </NavLink>
+              </li>
+            </ul>
+
+           
             <SearchForm />
+
+            <NavLink
+                  to="/watchlist"
+                  className={`btn btn-${tema} border position-relative ms-1`}>
+                  <i className='bi bi-heart-fill'></i>
+                 <span className='position-absolute top-0 start-100 badge rounded-pill bg-danger translate-middle' >
+                  {watchList.length}
+                 </span>
+                
+                 
+                </NavLink>
           </div>
         </div>
       </nav>
