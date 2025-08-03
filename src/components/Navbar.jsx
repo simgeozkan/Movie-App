@@ -6,6 +6,8 @@ import '../index.css';
 import { TemaContext } from '../context/TemaContext.jsx';
 import TemaSelector from './TemaSelector.jsx';
 import { UserContext } from '../context/UserContext.jsx';
+import { logout } from "../services/authService";
+import { useNavigate } from "react-router-dom";
 
 
 
@@ -16,31 +18,44 @@ import { UserContext } from '../context/UserContext.jsx';
 
 const Navbar = () => {
 
- 
-const {tema,setTema}=useContext(TemaContext);
-const { watchList} = useContext(UserContext);
+  const { user,setUser  } = useContext(UserContext);
+  const navigate = useNavigate();
 
-const color=tema==="dark"? "text-white":"text-black";
+  const { tema, setTema } = useContext(TemaContext);
+  const { watchList } = useContext(UserContext);
+
+  const color = tema === "dark" ? "text-white" : "text-black";
 
 
-  
+  const handleLogout = async () => {
+    try {
+      await logout();        // Firebase çıkış
+      setUser(null);         // Context'ten kullanıcıyı sil
+      navigate("/login");    // Login sayfasına yönlendir
+    } catch (error) {
+      alert("Çıkış yapılırken bir hata oluştu.");
+    }
+  };
+
+
+
   return (
 
-   <>
+    <>
 
 
-   
+
       <nav
         className={`navbar navbar-expand-lg bg-${tema} border-bottom border-body ${color}`}
         data-bs-theme={tema}
-       
-        
+
+
       >
         <div className="container-fluid">
-        <TemaSelector/>
+          <TemaSelector />
 
           <NavLink className={`navbar-brand ${color}" to="/"`}>
-          
+
             <Logo />
           </NavLink>
 
@@ -62,11 +77,11 @@ const color=tema==="dark"? "text-white":"text-black";
             <ul className="navbar-nav me-auto mb-2 mb-lg-0">
               <li className="nav-item">
                 <NavLink
-                
+
                   to="/"
                   end
                   className={'nav-link '}
-               
+
                 >
                   Home
                 </NavLink>
@@ -75,7 +90,7 @@ const color=tema==="dark"? "text-white":"text-black";
                 <NavLink
                   to="/movies"
                   className={'nav-link '}
-                 
+
                 >
                   Movies
                 </NavLink>
@@ -83,15 +98,40 @@ const color=tema==="dark"? "text-white":"text-black";
             </ul>
 
 
-            <ul className="navbar-nav ms-auto mb-2 mb-lg-0">
+
+            <ul className="navbar-nav">
+          {user && (
+            <>
+              <li className="nav-item me-3">
+                <span className="nav-link">Hoşgeldiniz, {user.displayName || user.email}</span>
+              </li>
               <li className="nav-item">
+                <button className="btn btn-outline-secondary" onClick={handleLogout}>
+                  Çıkış Yap
+                </button>
+              </li>
+            </>
+          )}
+        </ul>
+
+            <ul className="navbar-nav ms-auto mb-2 mb-lg-0">
+
+
+              <li className="nav-item">
+
                 <NavLink
-                
+
                   to="/login"
                   end
                   className={'nav-link '}
-               
+
                 >
+
+
+
+
+
+
                   Login
                 </NavLink>
               </li>
@@ -99,30 +139,30 @@ const color=tema==="dark"? "text-white":"text-black";
                 <NavLink
                   to="/register"
                   className={'nav-link '}
-                 
+
                 >
                   Register
                 </NavLink>
               </li>
             </ul>
 
-           
+
             <SearchForm />
 
             <NavLink
-                  to="/watchlist"
-                  className={`btn btn-${tema} border position-relative ms-1`}>
-                  <i className='bi bi-heart-fill'></i>
-                 <span className='position-absolute top-0 start-100 badge rounded-pill bg-danger translate-middle' >
-                  {watchList.length}
-                 </span>
-                
-                 
-                </NavLink>
+              to="/watchlist"
+              className={`btn btn-${tema} border position-relative ms-1`}>
+              <i className='bi bi-heart-fill'></i>
+              <span className='position-absolute top-0 start-100 badge rounded-pill bg-danger translate-middle' >
+                {watchList.length}
+              </span>
+
+
+            </NavLink>
           </div>
         </div>
       </nav>
-   
+
 
     </>
   );

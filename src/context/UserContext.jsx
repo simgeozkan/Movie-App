@@ -1,4 +1,5 @@
 import { createContext, useContext, useState, useEffect } from 'react';
+import { getAuth, onAuthStateChanged } from "firebase/auth";
 
 export const UserContext = createContext();
 
@@ -6,7 +7,7 @@ export function UserContextProvider({ children }) {
 
         
 
-
+    const [user, setUser] = useState(null);// yeni kullanıcı state'i
 
     const [watchList, setWatchList] = useState(() => {
 
@@ -15,7 +16,18 @@ export function UserContextProvider({ children }) {
     });
 
 
-    
+    useEffect(() => {
+      const auth = getAuth();
+  
+      const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
+        setUser(currentUser); // kullanıcı ya da null olur, sayfa yenilense bile otomatik gelir
+      });
+  
+      return () => unsubscribe();
+    }, []);
+  
+ 
+ 
 
     // useEffect ile temayi localStorage'dan yükle
    
@@ -46,7 +58,7 @@ export function UserContextProvider({ children }) {
 
 
   return (
-    <UserContext.Provider value={{ watchList,removeFromWatchList,addToWatchList}}>
+    <UserContext.Provider value={{ watchList,removeFromWatchList,addToWatchList,user, setUser }}>
       {children}
     </UserContext.Provider>
   );

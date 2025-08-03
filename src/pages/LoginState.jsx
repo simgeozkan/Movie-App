@@ -3,47 +3,61 @@ import { TemaContext } from "../context/TemaContext";
 import Input from "../components/input";
 import useInput from "../hooks/useInput";
 import {validateEmail,validateMinLength,isNotEmpty} from "../utils/validations";
+import { loginWithGoogle } from "../services/authService";
+import { useNavigate } from "react-router-dom";
+import { UserContext } from '../context/UserContext';
 
 
 
 function LoginState() {
+
+  const { setUser } = useContext(UserContext);
+  const navigate = useNavigate();
   const { tema } = useContext(TemaContext);
   const cardColor = tema === "dark" ? "text-bg-dark" : "text-bg-light";
   const textColor = tema === "dark" ? "text-white" : "text-dark";
 
  
-
+  const handleGoogleLogin = async () => {
+    try {
+      const loggedUser = await loginWithGoogle();
+      setUser(loggedUser);  // kullanıcı bilgisini context'e kaydet
+      console.log("Google ile giriş başarılı:", loggedUser.email);
+      navigate("/movies");
+      // Yönlendirme veya kullanıcı durumu güncelleme
+    } catch (error) {
+      alert("Google ile girişte hata: " + error.message);
+    }
+  };
   
 
 
   // useInput hook'unu email ve password için ayrı ayrı kullan
 
 
-  const {
-    value: email,
-    handleInputChange: handleEmailChange,
-    handleInputBlur: handleEmailBlur,
-    hasError:emailHasError,
-  } = useInput("",(value)=>validateEmail(value)&& isNotEmpty(value));
+  const {value: email,handleInputChange:handleEmailChange,handleInputBlur:handleEmailBlur, hasError:emailHasError} = useInput("",(value)=>validateEmail(value)&& isNotEmpty(value));
 
-  const {
-    value: password,
-    handleInputChange: handlePasswordChange,
-    handleInputBlur: handlePasswordBlur,
-    hasError:passwordHasError,
-  } = useInput("",(value)=>validateMinLength(value,6));
+  const {value: password,handleInputChange: handlePasswordChange,handleInputBlur: handlePasswordBlur, hasError:passwordHasError} = useInput("",(value)=>validateMinLength(value,6));
 
  
 
  
-  const handleSubmit = (e) => {  //form submit edildiginde sayfa yenilenmesin diye e.preventDefault() kullandik
+  const handleSubmit =async (e) => {  //form submit edildiginde sayfa yenilenmesin diye e.preventDefault() kullandik
     e.preventDefault(); 
-    if (!emailHasError && !passwordHasError) {
-      console.log("email:", email, "password:", password);
-    }
-    
-  };
+    setAuthError("");  // önce önceki hatayı temizle
 
+    if (!emailHasError && !passwordHasError) {
+      try {
+        const user = await login(email, password);
+        console.log("Giriş başarılı:", user);
+        // TODO: Giriş sonrası yönlendirme yapabilirsin
+      } catch (error) {
+        setAuthError(error.message);
+      }
+    } else {
+      setAuthError("Please fix validation errors before submitting.");
+    }
+  };
 
 
 
@@ -96,6 +110,19 @@ function LoginState() {
                   <button type="submit" className="btn btn-secondary" >
                     Login
                   </button>
+
+
+
+                  <button
+                      type="button"
+                      onClick={handleGoogleLogin}
+                      className="btn btn-secondary w-100 mt-3"
+                    >
+                 Google ile Giriş Yap
+               </button>
+
+
+
                 </div>
               </form>
 
