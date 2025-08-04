@@ -118,7 +118,7 @@ function LoginState() {
                       onClick={handleGoogleLogin}
                       className="btn btn-secondary w-100 mt-3"
                     >
-                 Google ile Giriş Yap
+                 Sign in with Google
                </button>
 
 
