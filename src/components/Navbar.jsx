@@ -108,7 +108,7 @@ const Navbar = () => {
               {user && (
                 <>
                   <li className="nav-item me-3">
-                    <span className="nav-link">Hoşgeldiniz, {user.displayName || user.email}</span>
+                    <span className="nav-link">WELCOME, {user.displayName || user.email}</span>
                   </li>
                   <li className="nav-item">
                     <button className="btn btn-outline-secondary" onClick={handleLogout}>
