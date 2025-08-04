@@ -1,7 +1,15 @@
 import { createContext, useContext, useState, useEffect } from 'react';
 import { getAuth, onAuthStateChanged } from "firebase/auth";
+import { doc, getDoc, setDoc } from "firebase/firestore";
+import { db } from "../services/firebaseConfig";
+
+
+
+
+
 
 export const UserContext = createContext();
+
 
 export function UserContextProvider({ children }) {
 
@@ -9,49 +17,86 @@ export function UserContextProvider({ children }) {
 
     const [user, setUser] = useState(null);// yeni kullanıcı state'i
 
-    const [watchList, setWatchList] = useState(() => {
 
-        const storedWatchList = localStorage.getItem("watchList");
-        return storedWatchList ? JSON.parse(storedWatchList) : [];
-    });
+    const [watchList, setWatchList] = useState([]);
 
 
-    useEffect(() => {
+    useEffect(() => {  // sayfanin ilk yuklenmesi islemi
+
       const auth = getAuth();
-  
-      const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
-        setUser(currentUser); // kullanıcı ya da null olur, sayfa yenilense bile otomatik gelir
-      });
-  
+    
+      const unsubscribe = onAuthStateChanged(auth, async (currentUser) => { // oturum bilgisi korunur.cunku sayfa her yuklendiginde kullanici alinir.
+
+
+        setUser(currentUser);
+
+
+        if (!currentUser) {
+          // 1️⃣ Çıkış yapan kullanıcı için listeyi temizle
+          setUser(null);
+          setWatchList([]);
+          return;
+        }
+
+        setUser(currentUser);
+
+    
+        
+          const userDocRef = doc(db, "users", currentUser.uid);
+          const docSnap = await getDoc(userDocRef);  // veritabanindan okuma islemi yapiir
+
+
+    
+          if (docSnap.exists()) {
+
+            setWatchList(docSnap.data().watchList || []); // okuma islemi sonrasi watchlist olusturulur
+
+          } else {
+
+            
+
+            await setDoc(userDocRef, { watchList: [] });// Kullanıcının verisi yoksa boş bir liste oluştur
+
+            setWatchList([]);
+          }
+        } 
+      );
+    
       return () => unsubscribe();
     }, []);
-  
  
  
 
-    // useEffect ile temayi localStorage'dan yükle
    
 
-    useEffect(() => {
-    // watchList her değiştiğinde localStorage'a kaydet.
-    localStorage.setItem("watchList", JSON.stringify(watchList));
-}, [watchList]);
 
 
+async function removeFromWatchList(id)
+ {
+  const updatedList = watchList.filter(movie => movie.id !== id); // secilen id e esit olmayan filmleri listeler.bu sayede o film listeden silinmis olur
+
+  setWatchList(updatedList);
+
+  if (user) {
+
+    const userDocRef = doc(db, "users", user.uid);
+    await setDoc(userDocRef, { watchList: updatedList }, { merge: true });
+  }
+}
 
 
+  async function addToWatchList(movie) {
 
-  const removeFromWatchList = (id) => {
-    setWatchList(prevList => prevList.filter(movie => movie.id !== id));
-  };
+    const isAlreadyInWatchlist = watchList.some(item => item.id === movie.id);// film listede zaten var mi
 
+    if (!isAlreadyInWatchlist && user) {
 
+      const updatedList = [...watchList, movie];
 
-  function addToWatchList(movie) {
-    const isAlreadyInWatchlist = watchList.some(watchList=> watchList.id === movie.id);// movie.id ye esit bir id var mi watchlistte kontrol eder
-
-    if (!isAlreadyInWatchlist) {
-      setWatchList(prevWatchlist => [...prevWatchlist, movie]); // yoksa bu filmi eski izleme listesinin ustune kaydeder.set eder ve watchliste gonderir
+      setWatchList(updatedList);
+  
+      const userDocRef = doc(db, "users", user.uid);
+      await setDoc(userDocRef, { watchList: updatedList }, { merge: true });
     }
   }
 

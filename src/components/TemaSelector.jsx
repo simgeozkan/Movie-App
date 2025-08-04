@@ -6,10 +6,12 @@ function TemaSelector() {
   const { tema, setTema } = useContext(TemaContext);
 
   const handleThemeToggle = () => {
+
     setTema(prevTema => (prevTema === "light" ? "dark" : "light"));
   }
 
   return (
+    
     <div className="tema-selector">
      
      

@@ -21,6 +21,7 @@ function MovieDetails() {
   const [director, setDirector] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
+  
   const { watchList,addToWatchList,removeFromWatchList} = useContext(UserContext);
 
   useEffect(() => {
@@ -105,15 +106,19 @@ function MovieDetails() {
                     const isAlreadyInWatchlist = watchList && watchList.some(watchListMovie => watchListMovie.id === movie.id);
                     return (
                       <span
-                    className={`badge fs-4 ms-2 pointer `}
+                    className={`badge fs-4 ms-2 `}
                     onClick={() => {
+                     
                       // Filmin izleme listesinde olup olmadığını kontrol et
                       if (isAlreadyInWatchlist) {
                         removeFromWatchList(movie.id); // Listede ise kaldır
                       } else {
                         addToWatchList(movie); // Listede değilse ekle
                       }
+
+
                     }}
+
                     style={{ cursor: 'pointer' }}
                   >
                     <i className={`bi ${isAlreadyInWatchlist ? 'bi-heart-fill text-danger' : 'bi-heart '}`}></i>

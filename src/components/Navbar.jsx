@@ -18,10 +18,12 @@ import { useNavigate } from "react-router-dom";
 
 const Navbar = () => {
 
-  const { user,setUser  } = useContext(UserContext);
+  const { user, setUser } = useContext(UserContext);
+
   const navigate = useNavigate();
 
   const { tema, setTema } = useContext(TemaContext);
+
   const { watchList } = useContext(UserContext);
 
   const color = tema === "dark" ? "text-white" : "text-black";
@@ -30,10 +32,14 @@ const Navbar = () => {
   const handleLogout = async () => {
     try {
       await logout();        // Firebase çıkış
+
       setUser(null);         // Context'ten kullanıcıyı sil
+
       navigate("/login");    // Login sayfasına yönlendir
+
     } catch (error) {
-      alert("Çıkış yapılırken bir hata oluştu.");
+
+      alert("Error ");
     }
   };
 
@@ -48,14 +54,13 @@ const Navbar = () => {
       <nav
         className={`navbar navbar-expand-lg bg-${tema} border-bottom border-body ${color}`}
         data-bs-theme={tema}
-
-
       >
+
         <div className="container-fluid">
+
           <TemaSelector />
 
           <NavLink className={`navbar-brand ${color}" to="/"`}>
-
             <Logo />
           </NavLink>
 
@@ -100,19 +105,19 @@ const Navbar = () => {
 
 
             <ul className="navbar-nav">
-          {user && (
-            <>
-              <li className="nav-item me-3">
-                <span className="nav-link">Hoşgeldiniz, {user.displayName || user.email}</span>
-              </li>
-              <li className="nav-item">
-                <button className="btn btn-outline-secondary" onClick={handleLogout}>
-                  Çıkış Yap
-                </button>
-              </li>
-            </>
-          )}
-        </ul>
+              {user && (
+                <>
+                  <li className="nav-item me-3">
+                    <span className="nav-link">Hoşgeldiniz, {user.displayName || user.email}</span>
+                  </li>
+                  <li className="nav-item">
+                    <button className="btn btn-outline-secondary" onClick={handleLogout}>
+                     Log out
+                    </button>
+                  </li>
+                </>
+              )}
+            </ul>
 
             <ul className="navbar-nav ms-auto mb-2 mb-lg-0">
 
