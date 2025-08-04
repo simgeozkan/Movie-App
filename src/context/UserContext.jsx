@@ -24,11 +24,13 @@ export function UserContextProvider({ children }) {
     useEffect(() => {  // sayfanin ilk yuklenmesi islemi
 
       const auth = getAuth();
-    
-      const unsubscribe = onAuthStateChanged(auth, async (currentUser) => { // oturum bilgisi korunur.cunku sayfa her yuklendiginde kullanici alinir.
+    // oturum bilgisi korunur.cunku sayfa her yuklendiginde kullanici alinir.
+      const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {  //auth her degistiginde fonksiyon callback ile tetiklenir
 
 
         setUser(currentUser);
+
+        console.log(currentUser.uid);
 
 
         if (!currentUser) {
@@ -38,7 +40,7 @@ export function UserContextProvider({ children }) {
           return;
         }
 
-        setUser(currentUser);
+
 
     
         
@@ -62,8 +64,8 @@ export function UserContextProvider({ children }) {
         } 
       );
     
-      return () => unsubscribe();
-    }, []);
+      return () => unsubscribe(); // useeffect subscribe fonksiyonu ile dinleyici kaldirir yani auth kaldirirlir
+    }, []); // useeffecti tetikleyen baska bir sey yok
  
  
 
